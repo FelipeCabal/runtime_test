@@ -1,14 +1,20 @@
 <?php
-require 'db_config.php';
+require 'db_config.php'; // Contiene $conn con conexión pg_connect
 require 'methods/method1_fgetcsv.php';
-require 'methods/method2_loaddata.php';
+require 'methods/method2_copy.php';
 require 'methods/method3_str_getcsv.php';
+require 'truncate_db.php';
 
-$res1 = method1_fgetcsv($mysqli);
-$res2 = method2_loaddata($mysqli);
-$res3 = method3_str_getcsv($mysqli);
+limpiarTabla($conn);
+$res1 = method1_fgetcsv($conn, $batchSize);
 
-$mysqli->close();
+limpiarTabla($conn);
+$res2 = method2_copy($conn);
+
+limpiarTabla($conn);
+$res3 = method3_str_getcsv($conn);
+
+pg_close($conn);
 ?>
 <!DOCTYPE html>
 <html>
@@ -42,22 +48,25 @@ $mysqli->close();
             <th>Método</th>
             <th>Tiempo (s)</th>
             <th>Filas Insertadas</th>
+            <th>Estado</th>
         </tr>
         <tr>
             <td>1. fgetcsv()</td>
             <td><?= round($res1['time'], 3) ?></td>
             <td><?= $res1['rows'] ?></td>
+            <td>✔️ OK</td>
         </tr>
         <tr>
-            <td>2. LOAD DATA LOCAL INFILE</td>
+            <td>2. COPY</td>
             <td><?= round($res2['time'], 3) ?></td>
-            <td><?= $res2['rows'] ?: '0' ?></td>
-            <td><?= $res2['error'] ? '❌ ' . htmlspecialchars($res2['error']) : '✔️' ?></td>
+            <td><?= $res2['rows'] ?? 0 ?></td>
+            <td><?= isset($res2['error']) ? '❌ ' . htmlspecialchars($res2['error']) : '✔️ OK' ?></td>
         </tr>
         <tr>
             <td>3. str_getcsv() en lotes</td>
             <td><?= round($res3['time'], 3) ?></td>
             <td><?= $res3['rows'] ?></td>
+            <td>✔️ OK</td>
         </tr>
     </table>
 </body>
