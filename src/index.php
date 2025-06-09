@@ -6,13 +6,13 @@ require 'methods/method3_str_getcsv.php';
 require 'truncate_db.php';
 
 limpiarTabla($conn);
-$res1 = method1_fgetcsv($conn, $batchSize);
+$res1 = method1_fgetcsv($conn);
 
 limpiarTabla($conn);
 $res2 = method2_copy($conn);
 
 limpiarTabla($conn);
-$res3 = method3_str_getcsv($conn);
+$res3 = method3_str_getcsv($conn, $batchSize);
 
 pg_close($conn);
 ?>
@@ -51,7 +51,7 @@ pg_close($conn);
             <th>Estado</th>
         </tr>
         <tr>
-            <td>1. fgetcsv()</td>
+            <td>1. Fila x Fila</td>
             <td><?= round($res1['time'], 3) ?></td>
             <td><?= $res1['rows'] ?></td>
             <td>✔️ OK</td>
@@ -63,7 +63,7 @@ pg_close($conn);
             <td><?= isset($res2['error']) ? '❌ ' . htmlspecialchars($res2['error']) : '✔️ OK' ?></td>
         </tr>
         <tr>
-            <td>3. str_getcsv() en lotes</td>
+            <td>3. en lotes</td>
             <td><?= round($res3['time'], 3) ?></td>
             <td><?= $res3['rows'] ?></td>
             <td>✔️ OK</td>

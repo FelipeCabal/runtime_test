@@ -1,13 +1,12 @@
 <?php
-function method3_str_getcsv($conn)
+function method3_str_getcsv($conn, $batchsize)
 {
     $file = __DIR__ . '/../../csv/clientes.csv';
     $lines = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-    array_shift($lines); // Quitar encabezado
 
     $start = microtime(true);
     $count = 0;
-    $batchSize = 1000;
+    $batchSize = $batchsize ?: 1000;
     $rows = [];
 
     foreach (array_chunk($lines, $batchSize) as $chunk) {
